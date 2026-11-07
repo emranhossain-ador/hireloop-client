@@ -1,5 +1,20 @@
 import type { NextConfig } from "next"
 
-const nextConfig: NextConfig = {}
+const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/login",
+        destination: "/sign-in",
+        permanent: true,
+      },
+      {
+        source: "/register",
+        destination: "/sign-up",
+        permanent: true,
+      },
+    ]
+  },
+}
 
 export default nextConfig

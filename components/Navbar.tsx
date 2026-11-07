@@ -47,14 +47,14 @@ export default function Navbar() {
                     <div className="h-6.25 w-px bg-border" />
 
                     <Link
-                        href="/login"
+                        href="/sign-in"
                         className="whitespace-nowrap text-[17px] font-medium text-primary transition-colors hover:text-[#a49cff]"
                     >
                         Sign In
                     </Link>
 
                     <Link
-                        href="/register"
+                        href="/sign-up"
                         className="flex items-center justify-center whitespace-nowrap rounded-[13px] bg-primary px-5.75 py-3 text-[16px] font-medium text-white shadow-md shadow-indigo-500/10 transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-indigo-500/25"
                     >
                         Get Started
@@ -99,7 +99,7 @@ export default function Navbar() {
                 <div className="my-2 h-px bg-border" />
 
                 <Link
-                    href="/login"
+                    href="/sign-in"
                     onClick={closeMenu}
                     className="rounded-lg px-3 py-3 text-[15px] font-medium text-[#8075ff] hover:bg-white/5"
                 >
@@ -107,7 +107,7 @@ export default function Navbar() {
                 </Link>
 
                 <Link
-                    href="/register"
+                    href="/sign-up"
                     onClick={closeMenu}
                     className="flex min-h-[47px] items-center justify-center rounded-[10px] bg-[#6255ff] text-[15px] font-medium text-white transition-colors hover:bg-[#5144ee]"
                 >
