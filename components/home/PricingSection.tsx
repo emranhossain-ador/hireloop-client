@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
     ArrowRight,
     BarChart3,
@@ -179,8 +180,8 @@ export default function PricingSection() {
 
                                 {/* Button */}
                                 <div className="relative mt-auto pt-8">
-                                    <button
-                                        type="button"
+                                    <Link
+                                        href="/checkout"
                                         className={`flex h-11 w-full items-center justify-between rounded-lg px-4 text-xs font-medium transition-all cursor-pointer border ${plan.popular
                                             ? "bg-foreground text-background hover:opacity-90 border-border"
                                             : "bg-secondary text-foreground hover:bg-primary hover:text-white border-border hover:border-primary"
@@ -189,7 +190,7 @@ export default function PricingSection() {
                                         <span>Choose This Plan</span>
 
                                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         );

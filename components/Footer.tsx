@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
     PinIcon,
 } from "lucide-react";
@@ -26,6 +27,12 @@ const resourceLinks = [
 ];
 
 export default function Footer() {
+    const pathname = usePathname();
+
+    if (pathname?.startsWith("/dashboard")) {
+        return null;
+    }
+
     return (
         <footer className="relative overflow-hidden">
             <div className="relative border-t border-border">

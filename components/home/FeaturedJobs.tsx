@@ -102,7 +102,7 @@ export default function FeaturedJobs() {
                 {/* View All Jobs */}
                 <div className="mt-7 flex justify-center">
                     <Link
-                        href="/jobs"
+                        href="/browse-jobs"
                         className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-border bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-all duration-200 hover:opacity-85"
                     >
                         View all job openings

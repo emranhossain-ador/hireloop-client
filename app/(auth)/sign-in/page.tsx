@@ -1,50 +1,15 @@
-"use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import {
-    Mail,
-    Lock,
-    Eye,
-    EyeOff,
-    ArrowRight,
     Sparkles,
-    CheckCircle2,
     ShieldCheck,
     Briefcase,
     TrendingUp,
     Star,
-    Loader2,
 } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
+import SigninForm from "@/components/auth/SigninForm";
 
 export default function SignInPage() {
-    const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [rememberMe, setRememberMe] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [socialLoading, setSocialLoading] = useState<string | null>(null);
-    const [formSuccess, setFormSuccess] = useState(false);
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-        // Simulate auth flow
-        setTimeout(() => {
-            setIsLoading(false);
-            setFormSuccess(true);
-        }, 1200);
-    };
-
-    const handleSocialLogin = (provider: string) => {
-        setSocialLoading(provider);
-        setTimeout(() => {
-            setSocialLoading(null);
-            setFormSuccess(true);
-        }, 1000);
-    };
 
     return (
         <main className="relative flex min-h-[calc(100vh-80px)] w-full items-center justify-center overflow-hidden py-8 sm:py-14 lg:py-16">
@@ -76,7 +41,7 @@ export default function SignInPage() {
 
             <div className="section-container relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
-                    
+
                     {/* Left Column: Visual Showcase & Social Proof (Hidden on mobile/tablet, shown on desktop) */}
                     <div className="hidden flex-col justify-center lg:col-span-6 lg:flex xl:col-span-7">
                         {/* Live Status Badge */}
@@ -151,7 +116,7 @@ export default function SignInPage() {
                     {/* Right Column: Sign-In Card */}
                     <div className="w-full lg:col-span-6 xl:col-span-5">
                         <div className="relative mx-auto w-full max-w-md rounded-2xl border border-white/10 bg-sidebar/85 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
-                            
+
                             {/* Card Header */}
                             <div className="text-center sm:text-left">
                                 <div className="inline-flex items-center gap-2 rounded-lg bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
@@ -166,179 +131,7 @@ export default function SignInPage() {
                                 </p>
                             </div>
 
-                            {/* Success Notification Alert */}
-                            {formSuccess && (
-                                <div className="mt-4 flex items-center gap-2.5 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-3 text-xs text-emerald-400">
-                                    <CheckCircle2 className="size-4 shrink-0" />
-                                    <span>Welcome back! Authenticating and redirecting to your dashboard...</span>
-                                </div>
-                            )}
-
-                            {/* Social Login Buttons Section */}
-                            <div className="mt-6 space-y-2.5">
-                                {/* Google Social Button (Full Width) */}
-                                <button
-                                    type="button"
-                                    onClick={() => handleSocialLogin("google")}
-                                    disabled={isLoading || socialLoading !== null}
-                                    className="group relative flex w-full items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-xs font-medium text-foreground transition-all duration-200 hover:border-white/25 hover:bg-white/[0.08] hover:shadow-md active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50 sm:text-sm"
-                                >
-                                    {socialLoading === "google" ? (
-                                        <Loader2 className="size-4 animate-spin text-primary" />
-                                    ) : (
-                                        <FcGoogle className="size-5 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-                                    )}
-                                    <span>Continue with Google</span>
-                                </button>
-
-                                {/* GitHub & LinkedIn Buttons (Two Columns) */}
-                                <div className="grid grid-cols-2 gap-2.5">
-                                    <button
-                                        type="button"
-                                        onClick={() => handleSocialLogin("github")}
-                                        disabled={isLoading || socialLoading !== null}
-                                        className="group flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-medium text-foreground transition-all duration-200 hover:border-white/25 hover:bg-white/[0.08] hover:shadow-md active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50 sm:text-sm"
-                                    >
-                                        {socialLoading === "github" ? (
-                                            <Loader2 className="size-4 animate-spin text-primary" />
-                                        ) : (
-                                            <FaGithub className="size-4.5 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-                                        )}
-                                        <span>GitHub</span>
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => handleSocialLogin("linkedin")}
-                                        disabled={isLoading || socialLoading !== null}
-                                        className="group flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-medium text-foreground transition-all duration-200 hover:border-white/25 hover:bg-white/[0.08] hover:shadow-md active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50 sm:text-sm"
-                                    >
-                                        {socialLoading === "linkedin" ? (
-                                            <Loader2 className="size-4 animate-spin text-primary" />
-                                        ) : (
-                                            <FaLinkedinIn className="size-4 shrink-0 text-[#0a66c2] transition-transform duration-200 group-hover:scale-110" />
-                                        )}
-                                        <span>LinkedIn</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Divider with Text */}
-                            <div className="relative my-6 flex items-center justify-center">
-                                <div className="w-full border-t border-border" />
-                                <span className="absolute bg-sidebar px-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                                    or continue with email
-                                </span>
-                            </div>
-
-                            {/* Sign In Form */}
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                {/* Email Field */}
-                                <div className="space-y-1.5">
-                                    <label
-                                        htmlFor="email"
-                                        className="block text-xs font-medium text-foreground sm:text-sm"
-                                    >
-                                        Email address
-                                    </label>
-                                    <div className="group relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted-foreground transition-colors group-focus-within:text-primary">
-                                            <Mail className="size-4" />
-                                        </div>
-                                        <input
-                                            id="email"
-                                            name="email"
-                                            type="email"
-                                            required
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            placeholder="alex@example.com"
-                                            autoComplete="email"
-                                            className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-2.5 pl-10 pr-4 text-xs text-foreground placeholder:text-muted-foreground/60 transition-all duration-200 hover:border-white/20 focus:border-primary focus:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-primary/20 sm:text-sm"
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Password Field */}
-                                <div className="space-y-1.5">
-                                    <div className="flex items-center justify-between">
-                                        <label
-                                            htmlFor="password"
-                                            className="block text-xs font-medium text-foreground sm:text-sm"
-                                        >
-                                            Password
-                                        </label>
-                                        <Link
-                                            href="#forgot-password"
-                                            className="text-xs font-medium text-primary transition-colors hover:text-[#8076ff] hover:underline"
-                                        >
-                                            Forgot password?
-                                        </Link>
-                                    </div>
-                                    <div className="group relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted-foreground transition-colors group-focus-within:text-primary">
-                                            <Lock className="size-4" />
-                                        </div>
-                                        <input
-                                            id="password"
-                                            name="password"
-                                            type={showPassword ? "text" : "password"}
-                                            required
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="••••••••••••"
-                                            autoComplete="current-password"
-                                            className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-2.5 pl-10 pr-10 text-xs text-foreground placeholder:text-muted-foreground/60 transition-all duration-200 hover:border-white/20 focus:border-primary focus:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-primary/20 sm:text-sm"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            aria-label={showPassword ? "Hide password" : "Show password"}
-                                            className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-muted-foreground transition-colors hover:text-foreground"
-                                        >
-                                            {showPassword ? (
-                                                <EyeOff className="size-4" />
-                                            ) : (
-                                                <Eye className="size-4" />
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Remember Me Checkbox */}
-                                <div className="flex items-center justify-between pt-1">
-                                    <label className="flex cursor-pointer select-none items-center gap-2.5">
-                                        <input
-                                            type="checkbox"
-                                            checked={rememberMe}
-                                            onChange={(e) => setRememberMe(e.target.checked)}
-                                            className="size-4 rounded-sm border-white/20 bg-white/5 text-primary accent-primary transition-colors focus:ring-2 focus:ring-primary/30"
-                                        />
-                                        <span className="text-xs text-muted-foreground sm:text-sm">
-                                            Remember me for 30 days
-                                        </span>
-                                    </label>
-                                </div>
-
-                                {/* Submit Button */}
-                                <button
-                                    type="submit"
-                                    disabled={isLoading}
-                                    className="group relative flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-xs font-semibold text-white shadow-lg shadow-primary/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-primary/30 active:translate-y-0 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-60 sm:text-sm"
-                                >
-                                    {isLoading ? (
-                                        <>
-                                            <Loader2 className="size-4 animate-spin" />
-                                            <span>Signing in...</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span>Sign In</span>
-                                            <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
-                                        </>
-                                    )}
-                                </button>
-                            </form>
+                            <SigninForm />
 
                             {/* Switch to Sign Up */}
                             <p className="mt-6 text-center text-xs text-muted-foreground sm:text-sm">
