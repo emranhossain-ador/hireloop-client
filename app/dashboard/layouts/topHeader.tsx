@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { Search, Bell, Menu, Plus } from "lucide-react";
-import { useSession } from "@/lib/auth-client";
 
 interface TopHeaderProps {
     onOpenMobileMenu?: () => void;
@@ -10,10 +9,8 @@ interface TopHeaderProps {
 
 export default function TopHeader({ onOpenMobileMenu }: TopHeaderProps) {
 
-
-
     return (
-        <header className="sticky top-0 z-30 border-b border-white/5 bg-[#0f0f12]/95 backdrop-blur-md">
+        <header className="fixed w-full top-0 left-0 lg:pl-72 z-30 border-b border-white/5 bg-[#0f0f12]/95 backdrop-blur-md">
 
             {/* Main Header Row */}
             <div className="flex items-center justify-between px-4 py-3 sm:px-6 lg:px-8">

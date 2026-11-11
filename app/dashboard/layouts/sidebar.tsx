@@ -3,20 +3,25 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { seekerNavItems } from "@/app/dashboard/seeker/seekerNavItems";
+import { adminNavItems } from "@/app/dashboard/admin/adminNavItems";
+import { recruiterNavItems } from "@/app/dashboard/recruiter/recruiterNavItems";
+
 import {
-    LayoutGrid,
-    Briefcase,
-    Bookmark,
-    FileText,
-    CreditCard,
-    Settings,
-    LogOut,
+    LucideIcon,
     X,
 } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
 
 interface SidebarProps {
     mobileOpen?: boolean;
     onCloseMobile?: () => void;
+}
+
+interface NavItem {
+    name: string;
+    href: string;
+    icon: LucideIcon;
 }
 
 export default function DashboardSidebar({
@@ -25,38 +30,19 @@ export default function DashboardSidebar({
 }: SidebarProps) {
     const pathname = usePathname();
 
-    const navItems = [
-        {
-            name: "Dashboard",
-            href: "/dashboard/seeker",
-            icon: LayoutGrid,
-        },
-        {
-            name: "Jobs",
-            href: "/browse-jobs",
-            icon: Briefcase,
-        },
-        {
-            name: "Saved Jobs",
-            href: "/dashboard/seeker/saved-jobs",
-            icon: Bookmark,
-        },
-        {
-            name: "Applications",
-            href: "/dashboard/seeker/applications",
-            icon: FileText,
-        },
-        {
-            name: "Billing",
-            href: "/checkout",
-            icon: CreditCard,
-        },
-        {
-            name: "Settings",
-            href: "/dashboard/settings",
-            icon: Settings,
-        },
-    ];
+    const session = useSession();
+
+    const userRole = session?.data?.user?.role;
+
+    const navItems: NavItem[] = [];
+
+    if (userRole === "admin") {
+        navItems.push(...adminNavItems);
+    } else if (userRole === "recruiter") {
+        navItems.push(...recruiterNavItems);
+    } else if (userRole === "seeker") {
+        navItems.push(...seekerNavItems);
+    }
 
     const sidebarContent = (
         <div className="flex h-full flex-col justify-between p-5">
@@ -64,18 +50,20 @@ export default function DashboardSidebar({
             <div>
                 {/* Logo and close button on mobile */}
                 <div className="flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2">
-                        <Image
-                            src="/images/logo.png"
-                            width={34}
-                            height={34}
-                            alt="HireLoop"
-                            className="h-8 w-auto object-contain"
-                        />
-                        <span className="text-xl font-bold tracking-tight text-white">
-                            hire<span className="text-primary">loop</span>
+                    <div className="flex flex-col items-start gap-2">
+                        <Link href="/" className="flex items-center gap-2">
+                            <Image
+                                src="/images/logo.png"
+                                width={34}
+                                height={34}
+                                alt="HireLoop"
+                                className="h-8 w-auto object-contain"
+                            />
+                        </Link>
+                        <span className="text-sm font-normal tracking-wide text-white">
+                            Admin Console
                         </span>
-                    </Link>
+                    </div>
 
                     {onCloseMobile && (
                         <button
@@ -90,13 +78,13 @@ export default function DashboardSidebar({
 
                 {/* Navigation Menu */}
                 <nav className="mt-6 space-y-1.5">
-                    {navItems.map((item) => {
+                    {navItems.map((item, i) => {
                         const Icon = item.icon;
                         const isActive = pathname === item.href;
 
                         return (
                             <Link
-                                key={item.name}
+                                key={i}
                                 href={item.href}
                                 onClick={onCloseMobile}
                                 className={`group relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-medium transition-all duration-200 sm:text-sm ${isActive
@@ -151,7 +139,7 @@ export default function DashboardSidebar({
     return (
         <>
             {/* Desktop Static Sidebar */}
-            <aside className="hidden h-screen w-64 shrink-0 flex-col border-r border-white/5 bg-[#0f0f12] lg:flex">
+            <aside className="fixed top-0 left-0 z-40 hidden h-screen w-72 shrink-0 flex-col border-r border-white/5 bg-[#0f0f12] lg:flex">
                 {sidebarContent}
             </aside>
 
