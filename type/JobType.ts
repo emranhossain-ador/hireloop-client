@@ -15,6 +15,4 @@ export interface JobType {
     status: string;
     createdAt?: Date;
     updatedAt?: Date;
-
-
 }
