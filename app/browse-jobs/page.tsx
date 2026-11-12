@@ -7,12 +7,19 @@ import JobSearchFilter from "./_components/jobSearchFilter";
 import { getJobs } from "@/lib/api/Jobs";
 import { JobType } from "@/type/JobType";
 import JobCard from "@/components/JobCard";
+import EmptyContent from "./_components/emptyContent";
 
 
 
-const BrowseJobsPage = async () => {
+const BrowseJobsPage = async ({ searchParams }: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) => {
 
-    const jobs: JobType[] = await getJobs();
+    const search = await searchParams;
+
+    const query = new URLSearchParams(search as Record<string, string>).toString();
+
+    const jobs: JobType[] = await getJobs(query);
 
     return (
         <div className="min-h-screen bg-background pb-16 pt-6 sm:pb-24 sm:pt-8">
@@ -31,7 +38,7 @@ const BrowseJobsPage = async () => {
                     </button>
 
                     <div className="text-xs text-muted-foreground">
-                        Found <span className="font-semibold text-foreground">1,248</span> Jobs
+                        Found <span className="font-semibold text-foreground">{jobs.length}</span> Jobs
                     </div>
                 </div>
 
@@ -59,16 +66,7 @@ const BrowseJobsPage = async () => {
                         <div className="mt-4 space-y-3.5">
                             {
                                 jobs.length === 0 ?
-                                    <div className="flex flex-col items-center justify-center rounded-2xl border border-white/8 bg-[#16161a] p-12 text-center">
-                                        <p className="text-sm font-medium text-foreground">
-                                            No jobs found matching your filters.
-                                        </p>
-                                        <button
-                                            className="mt-3 text-xs font-medium text-primary hover:underline"
-                                        >
-                                            Reset all filters
-                                        </button>
-                                    </div>
+                                    <EmptyContent />
                                     :
 
                                     jobs?.map((job) => (

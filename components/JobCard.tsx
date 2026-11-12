@@ -73,10 +73,9 @@ const JobCard = ({ job }: { job: JobType }) => {
                             </span>
 
                             {/* Easy Apply Tag (Green) */}
-                            {/* <span className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-400 sm:text-xs">
-                                <Zap className="size-3.5 fill-current" />
-                                <span>Easy Apply</span>
-                            </span> */}
+                            {job.remote && <span className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-400 sm:text-xs">
+                                <span>Remote</span>
+                            </span>}
 
                             {/* Hot Job Tag (Amber) */}
                             {/* <span className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500/25 bg-amber-500/10 px-2.5 py-1 text-[11px] font-medium text-amber-400 sm:text-xs">
