@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { getJobs } from "@/lib/api/Jobs";
 import { JobType } from "@/type/JobType";
+import { format, formatDistance } from "date-fns";
+import { JobDeleteDialog } from "@/components/JobDeleteDialog";
 
 
 
@@ -27,18 +29,7 @@ const formatSalary = (salary: string) => {
 };
 
 
-const getTimeAgo = (date: string | Date) => {
-    const createdDate = new Date(date);
-    const now = new Date();
 
-    const diffTime = now.getTime() - createdDate.getTime();
-    const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    if (days === 0) return "Today";
-    if (days === 1) return "1 day ago";
-
-    return `${days} days ago`;
-};
 
 const ManageJobsPage = async () => {
 
@@ -152,7 +143,7 @@ const ManageJobsPage = async () => {
                                         </td>
 
                                         <td className="px-4 py-4">
-                                            {job.status === "Active" ? (
+                                            {job.status.toLocaleLowerCase() === "active" ? (
                                                 <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
                                                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" />
                                                     Active
@@ -166,9 +157,11 @@ const ManageJobsPage = async () => {
                                         </td>
 
                                         <td className="whitespace-nowrap px-4 py-4">
-                                            <p className="text-sm text-white">{job.deadline}</p>
+                                            <p className="text-sm text-white">{format(new Date(job.deadline), "MM/dd/yyyy")}</p>
                                             <p className="mt-0.5 text-xs text-muted-foreground">
-                                                {job.createdAt ? getTimeAgo(job.createdAt) : "N/A"}
+                                                {job.createdAt ? formatDistance(new Date(job.createdAt), new Date(), {
+                                                    addSuffix: true
+                                                }) : "N/A"}
                                             </p>
                                         </td>
 
@@ -181,20 +174,7 @@ const ManageJobsPage = async () => {
                                                     <Pencil className="size-3.5" />
                                                     Update
                                                 </button>
-                                                <button
-                                                    type="button"
-                                                    aria-label={`Delete ${job.jobTitle}`}
-                                                    className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-white"
-                                                >
-                                                    <Trash2 className="size-4" />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    aria-label={`More actions for ${job.jobTitle}`}
-                                                    className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-white"
-                                                >
-                                                    <MoreVertical className="size-4" />
-                                                </button>
+                                                <JobDeleteDialog jobId={job._id as string} />
                                             </div>
                                         </td>
                                     </tr>
