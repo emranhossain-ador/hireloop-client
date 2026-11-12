@@ -58,8 +58,15 @@ export default function Navbar() {
 
                     {
                         user ?
+                            <>
+                                <Link href={`/dashboard/${user?.role}`}
+                                    className="flex items-center justify-center whitespace-nowrap rounded-[13px] bg-primary px-5.75 py-3 text-[16px] font-medium text-white shadow-md shadow-indigo-500/10 transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-indigo-500/25"
+                                >
+                                    Dashboard
+                                </Link>
 
-                            <button type="button" onClick={() => signOut()} className="px-4 py-2.5 rounded-md bg-red-500 text-white text-sm font-medium tracking-wide cursor-pointer hover:bg-red-600 transition-all">Logout</button>
+                                <button type="button" onClick={() => signOut()} className="px-4 py-2.5 rounded-md bg-red-500 text-white text-sm font-medium tracking-wide cursor-pointer hover:bg-red-600 transition-all">Logout</button>
+                            </>
 
                             :
                             (
@@ -131,7 +138,7 @@ export default function Navbar() {
                 <Link
                     href="/sign-up"
                     onClick={closeMenu}
-                    className="flex min-h-[47px] items-center justify-center rounded-[10px] bg-[#6255ff] text-[15px] font-medium text-white transition-colors hover:bg-[#5144ee]"
+                    className="flex min-h-11.75 items-center justify-center rounded-[10px] bg-[#6255ff] text-[15px] font-medium text-white transition-colors hover:bg-[#5144ee]"
                 >
                     Get Started
                 </Link>

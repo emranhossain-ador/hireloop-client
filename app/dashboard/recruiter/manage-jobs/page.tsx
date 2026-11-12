@@ -15,19 +15,7 @@ import { getJobs } from "@/lib/api/Jobs";
 import { JobType } from "@/type/JobType";
 import { format, formatDistance } from "date-fns";
 import { JobDeleteDialog } from "@/components/JobDeleteDialog";
-
-
-
-const formatSalary = (salary: string) => {
-    const amount = Number(salary);
-
-    if (amount >= 1000) {
-        return `${amount / 1000}k`;
-    }
-
-    return amount.toString();
-};
-
+import { FormatSalary } from "@/components/ui/FormatSalary";
 
 
 
@@ -132,7 +120,7 @@ const ManageJobsPage = async () => {
                                         </td>
 
                                         <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-200 flex items-center gap-1">
-                                            <BangladeshiTaka size={15} />{formatSalary(job.minSalary)} - {formatSalary(job.maxSalary)} / {job.frequency}
+                                            <BangladeshiTaka size={15} />{FormatSalary(job.minSalary)} - {FormatSalary(job.maxSalary)} / {job.frequency}
                                         </td>
 
                                         <td className="px-4 py-4">
