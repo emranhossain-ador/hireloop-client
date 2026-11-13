@@ -5,10 +5,8 @@ import {
     Code,
     Globe,
     MapPin,
-    MoreVertical,
     Pencil,
     Plus,
-    Trash2,
     Users,
 } from "lucide-react";
 import { getJobs } from "@/lib/api/Jobs";

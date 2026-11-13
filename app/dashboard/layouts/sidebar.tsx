@@ -44,6 +44,9 @@ export default function DashboardSidebar({
         navItems.push(...seekerNavItems);
     }
 
+    // user info 
+    const user = session?.data?.user;
+
     const sidebarContent = (
         <div className="flex h-full flex-col justify-between p-5">
             {/* Top Area: Logo + Profile + Navigation */}
@@ -125,10 +128,10 @@ export default function DashboardSidebar({
                     </div>
                     <div className="min-w-0 flex-1">
                         <div className="truncate text-xs font-bold text-white">
-                            Alex Rivera
+                            {user?.name}
                         </div>
                         <div className="truncate text-[10px] text-muted-foreground">
-                            Pro Member
+                            {user?.email}
                         </div>
                     </div>
                 </div>
