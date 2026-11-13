@@ -22,9 +22,17 @@ import { getJobById } from "@/lib/api/Jobs";
 import { JobType } from "@/type/JobType";
 import { FormatSalary } from "@/components/ui/FormatSalary";
 import ApplyNowButton from "@/components/ApplyNowButton";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const JobDetailsPage = async ({ params }: { params: Promise<{ jobsId: string }> }) => {
     const { jobsId } = await params;
+
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+
+    const user = session?.user;
 
     const jobDetails: JobType = await getJobById(jobsId);
 
@@ -79,20 +87,25 @@ const JobDetailsPage = async ({ params }: { params: Promise<{ jobsId: string }> 
                         </div>
 
                         {/* Right: Actions (Bookmark & Apply Now) */}
-                        <div className="flex items-center gap-3 self-end sm:self-center">
-                            {/* Bookmark Button */}
-                            <button
-                                type="button"
-                                className={`flex size-11 items-center justify-center rounded-xl border border-white/10 bg-[#1e1e24] text-foreground transition-all duration-200 hover:border-white/25 hover:bg-[#25252c] active:scale-95 text-gray-300`}
-                            >
-                                <Bookmark
-                                    className={`size-4.5 text-gray-300`}
-                                />
-                            </button>
+                        {
+                            user?.role === 'seeker' &&
 
-                            {/* Apply Now Primary Action */}
-                            <ApplyNowButton jobId={jobDetails._id as string} />
-                        </div>
+                            <div className="flex items-center gap-3 self-end sm:self-center">
+                                {/* Bookmark Button */}
+                                <button
+                                    type="button"
+                                    className={`flex size-11 items-center justify-center rounded-xl border border-white/10 bg-[#1e1e24] text-foreground transition-all duration-200 hover:border-white/25 hover:bg-[#25252c] active:scale-95 text-gray-300`}
+                                >
+                                    <Bookmark
+                                        className={`size-4.5 text-gray-300`}
+                                    />
+                                </button>
+
+                                {/* Apply Now Primary Action */}
+                                <ApplyNowButton jobId={jobDetails._id as string} />
+                            </div>
+                        }
+
 
                     </div>
                 </div>
