@@ -1,6 +1,7 @@
 "use client"
 
 import { applyToJob } from "@/lib/actions/JobApply";
+import { myApplicationsCount } from "@/lib/api/JobApplications";
 import { useSession } from "@/lib/auth-client"
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -18,18 +19,26 @@ const ApplyNowButton = ({ jobId }: { jobId: string }) => {
             return;
         }
 
-        try {
-            const apply = await applyToJob(jobId, user.id);
+        const jobCount = await myApplicationsCount(user.id);
 
-            if (apply.success) {
-                toast.success("Applied to the job successfully!");
+        if (jobCount.count >= 5) {
+            router.push('/checkout');
+        } else {
+            try {
+                const apply = await applyToJob(jobId, user.id);
+
+                if (apply.success) {
+                    toast.success("Applied to the job successfully!");
+                }
+
+            } catch (error) {
+                toast.error(
+                    error instanceof Error ? error.message : "Something went wrong!"
+                );
             }
-
-        } catch (error) {
-            toast.error(
-                error instanceof Error ? error.message : "Something went wrong!"
-            );
         }
+
+
     };
 
     return (
