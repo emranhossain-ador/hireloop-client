@@ -1,8 +1,5 @@
-"use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import {
     Bookmark,
     CheckCircle2,
@@ -18,40 +15,18 @@ import {
     Laptop,
     Plane,
     ArrowLeft,
-    Check,
-    X,
     ExternalLink,
-    Send,
-    Loader2,
+    BangladeshiTaka,
 } from "lucide-react";
+import { getJobById } from "@/lib/api/Jobs";
+import { JobType } from "@/type/JobType";
+import { FormatSalary } from "@/components/ui/FormatSalary";
+import ApplyNowButton from "@/components/ApplyNowButton";
 
-export default function JobDetailsPage() {
-    const params = useParams();
-    const jobsId = params?.jobsId as string;
-    const job = getJobById(jobsId);
+const JobDetailsPage = async ({ params }: { params: Promise<{ jobsId: string }> }) => {
+    const { jobsId } = await params;
 
-    const [isSaved, setIsSaved] = useState(false);
-    const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
-    const [isApplying, setIsApplying] = useState(false);
-    const [applySuccess, setApplySuccess] = useState(false);
-
-    // Form inputs for application modal
-    const [applicantName, setApplicantName] = useState("");
-    const [applicantEmail, setApplicantEmail] = useState("");
-    const [coverNote, setCoverNote] = useState("");
-
-    const handleApplySubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsApplying(true);
-        setTimeout(() => {
-            setIsApplying(false);
-            setApplySuccess(true);
-            setTimeout(() => {
-                setApplySuccess(false);
-                setIsApplyModalOpen(false);
-            }, 1800);
-        }, 1200);
-    };
+    const jobDetails: JobType = await getJobById(jobsId);
 
     return (
         <div className="min-h-screen bg-background pb-20 pt-6 sm:pb-28 sm:pt-8">
@@ -88,11 +63,11 @@ export default function JobDetailsPage() {
                             {/* Title & Verified Company */}
                             <div>
                                 <h1 className="text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
-                                    {job?.title || "Senior Product Designer"}
+                                    {jobDetails.jobTitle}
                                 </h1>
                                 <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
                                     <span className="font-medium text-foreground/90">
-                                        {job?.company || "CloudScale AI"}
+                                        {jobDetails.companyName}
                                     </span>
                                     <span className="text-muted-foreground">&bull;</span>
                                     <div className="flex items-center gap-1.5 font-medium text-emerald-400">
@@ -108,25 +83,15 @@ export default function JobDetailsPage() {
                             {/* Bookmark Button */}
                             <button
                                 type="button"
-                                onClick={() => setIsSaved(!isSaved)}
-                                aria-label={isSaved ? "Saved job" : "Save job"}
-                                className={`flex size-11 items-center justify-center rounded-xl border border-white/10 bg-[#1e1e24] text-foreground transition-all duration-200 hover:border-white/25 hover:bg-[#25252c] active:scale-95 ${isSaved ? "border-primary/50 text-primary" : "text-gray-300"
-                                    }`}
+                                className={`flex size-11 items-center justify-center rounded-xl border border-white/10 bg-[#1e1e24] text-foreground transition-all duration-200 hover:border-white/25 hover:bg-[#25252c] active:scale-95 text-gray-300`}
                             >
                                 <Bookmark
-                                    className={`size-4.5 ${isSaved ? "fill-primary text-primary" : ""
-                                        }`}
+                                    className={`size-4.5 text-gray-300`}
                                 />
                             </button>
 
                             {/* Apply Now Primary Action */}
-                            <button
-                                type="button"
-                                onClick={() => setIsApplyModalOpen(true)}
-                                className="flex items-center justify-center rounded-xl bg-white px-6 py-2.5 text-xs font-semibold text-black shadow-md transition-all duration-200 hover:bg-white/90 active:scale-[0.99] sm:px-7 sm:py-3 sm:text-sm"
-                            >
-                                Apply Now
-                            </button>
+                            <ApplyNowButton jobId={jobDetails._id as string} />
                         </div>
 
                     </div>
@@ -143,8 +108,8 @@ export default function JobDetailsPage() {
                         <div className="mt-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground sm:text-[11px]">
                             Salary Range
                         </div>
-                        <div className="mt-1 text-sm font-bold text-white sm:text-base">
-                            $140k &ndash; $180k
+                        <div className="mt-1 text-sm flex items-center gap-1 font-bold text-white sm:text-base">
+                            <BangladeshiTaka size={15} /> {FormatSalary(jobDetails.minSalary)} &ndash; <BangladeshiTaka size={15} />{FormatSalary(jobDetails.maxSalary)}
                         </div>
                     </div>
 
@@ -155,7 +120,7 @@ export default function JobDetailsPage() {
                             Location
                         </div>
                         <div className="mt-1 text-sm font-bold text-white sm:text-base">
-                            Remote (US)
+                            {jobDetails.remote ? "( Remote )" : jobDetails.jobLocation}
                         </div>
                     </div>
 
@@ -166,7 +131,7 @@ export default function JobDetailsPage() {
                             Job Type
                         </div>
                         <div className="mt-1 text-sm font-bold text-white sm:text-base">
-                            Full-time
+                            {jobDetails.jobType}
                         </div>
                     </div>
 
@@ -197,35 +162,20 @@ export default function JobDetailsPage() {
                                 Job Description
                             </h2>
                             <p className="mt-3 text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                                At CloudScale AI, we are building the next generation of infrastructure monitoring tools. We are looking for a Senior Product Designer who is passionate about translating complex technical workflows into elegant, intuitive interfaces. You will be a key member of our design team, working closely with engineering and product leadership to define the vision for our core platform experience.
+                                {jobDetails.qualifications}
                             </p>
                         </div>
 
-                        <div className="my-7 border-t border-white/[0.06]" />
+                        <div className="my-7 border-t border-white/6" />
 
                         {/* SECTION: RESPONSIBILITIES */}
                         <div>
                             <h2 className="text-base font-bold text-white sm:text-lg">
                                 Responsibilities
                             </h2>
-                            <ul className="mt-4 space-y-3 text-xs text-muted-foreground sm:text-sm">
-                                <li className="flex items-start gap-3">
-                                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-white/70" />
-                                    <span>Lead the end-to-end design process for major platform features, from discovery to high-fidelity implementation.</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-white/70" />
-                                    <span>Collaborate with cross-functional partners to understand user needs and translate them into functional design requirements.</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-white/70" />
-                                    <span>Maintain and evolve our design system, ensuring consistency and accessibility across the entire product suite.</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-white/70" />
-                                    <span>Conduct user research and usability testing to validate design decisions and iterate based on feedback.</span>
-                                </li>
-                            </ul>
+                            <div className="mt-3">
+                                {jobDetails.responsibilities}
+                            </div>
                         </div>
 
                         <div className="my-7 border-t border-white/[0.06]" />
@@ -405,125 +355,8 @@ export default function JobDetailsPage() {
 
             </div>
 
-            {/* ============================================================
-                APPLY NOW INTERACTIVE MODAL
-            ============================================================ */}
-            {isApplyModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
-                    <div className="relative w-full max-w-lg rounded-2xl border border-white/10 bg-[#16161a] p-6 shadow-2xl sm:p-7">
-
-                        {/* Modal Header */}
-                        <div className="flex items-center justify-between border-b border-border pb-4">
-                            <div>
-                                <h3 className="text-lg font-bold text-white">
-                                    Apply for Senior Product Designer
-                                </h3>
-                                <p className="mt-0.5 text-xs text-muted-foreground">
-                                    CloudScale AI &bull; Remote (US)
-                                </p>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setIsApplyModalOpen(false)}
-                                className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-white/10 hover:text-white"
-                            >
-                                <X className="size-4.5" />
-                            </button>
-                        </div>
-
-                        {/* Success Notification Alert */}
-                        {applySuccess ? (
-                            <div className="my-8 flex flex-col items-center justify-center text-center">
-                                <div className="flex size-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400">
-                                    <Check className="size-6" />
-                                </div>
-                                <h4 className="mt-3 text-base font-bold text-white">
-                                    Application Submitted!
-                                </h4>
-                                <p className="mt-1 max-w-xs text-xs text-muted-foreground">
-                                    CloudScale AI hiring team has received your application and will review your profile.
-                                </p>
-                            </div>
-                        ) : (
-                            <form onSubmit={handleApplySubmit} className="mt-5 space-y-4">
-                                <div>
-                                    <label
-                                        htmlFor="modal-name"
-                                        className="block text-xs font-medium text-foreground"
-                                    >
-                                        Full Name
-                                    </label>
-                                    <input
-                                        id="modal-name"
-                                        type="text"
-                                        required
-                                        value={applicantName}
-                                        onChange={(e) => setApplicantName(e.target.value)}
-                                        placeholder="Alex Morgan"
-                                        className="mt-1.5 w-full rounded-xl border border-white/10 bg-[#101014] px-3.5 py-2.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-white/30 focus:outline-none sm:text-sm"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label
-                                        htmlFor="modal-email"
-                                        className="block text-xs font-medium text-foreground"
-                                    >
-                                        Email Address
-                                    </label>
-                                    <input
-                                        id="modal-email"
-                                        type="email"
-                                        required
-                                        value={applicantEmail}
-                                        onChange={(e) => setApplicantEmail(e.target.value)}
-                                        placeholder="alex@example.com"
-                                        className="mt-1.5 w-full rounded-xl border border-white/10 bg-[#101014] px-3.5 py-2.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-white/30 focus:outline-none sm:text-sm"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label
-                                        htmlFor="modal-note"
-                                        className="block text-xs font-medium text-foreground"
-                                    >
-                                        Portfolio / Note to Hiring Team
-                                    </label>
-                                    <textarea
-                                        id="modal-note"
-                                        rows={3}
-                                        value={coverNote}
-                                        onChange={(e) => setCoverNote(e.target.value)}
-                                        placeholder="https://portfolio.design &mdash; Excited about designing infrastructure tools at CloudScale AI..."
-                                        className="mt-1.5 w-full rounded-xl border border-white/10 bg-[#101014] px-3.5 py-2.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-white/30 focus:outline-none sm:text-sm"
-                                    />
-                                </div>
-
-                                <div className="pt-2">
-                                    <button
-                                        type="submit"
-                                        disabled={isApplying}
-                                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-xs font-bold text-black shadow-md transition-all hover:bg-white/90 disabled:opacity-50 sm:text-sm"
-                                    >
-                                        {isApplying ? (
-                                            <>
-                                                <Loader2 className="size-4 animate-spin" />
-                                                <span>Submitting Application...</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Send className="size-4" />
-                                                <span>Submit Application</span>
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
-                            </form>
-                        )}
-
-                    </div>
-                </div>
-            )}
         </div>
     );
 }
+
+export default JobDetailsPage;

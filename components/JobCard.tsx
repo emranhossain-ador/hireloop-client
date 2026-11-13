@@ -25,7 +25,7 @@ const JobCard = ({ job }: { job: JobType }) => {
                                 <h3 className="text-base font-bold tracking-tight text-foreground transition-colors group-hover:text-white sm:text-lg">
                                     <Link
                                         href={`/browse-jobs/${job._id}`}
-                                        className="hover:underline"
+                                        className="hover:text-primary"
                                     >
                                         {job.jobTitle}
                                     </Link>

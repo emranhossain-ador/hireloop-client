@@ -3,7 +3,7 @@
 import { signIn } from "@/lib/auth-client";
 import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail, TriangleExclamationPoint } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "react-toastify";
@@ -21,6 +21,9 @@ const SigninForm = () => {
     const [rememberMe, setRememberMe] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get('redirectTo') ?? "/";
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -56,7 +59,7 @@ const SigninForm = () => {
                 } else {
                     form.reset();
                     toast.success("Login successfull");
-                    router.push('/')
+                    router.push(redirectTo);
                 }
 
 
