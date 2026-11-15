@@ -2,6 +2,7 @@
 
 import { applyToJob } from "@/lib/actions/JobApply";
 import { myApplicationsCount } from "@/lib/api/JobApplications";
+import { getPremiumUserById } from "@/lib/api/User";
 import { useSession } from "@/lib/auth-client"
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -19,9 +20,14 @@ const ApplyNowButton = ({ jobId }: { jobId: string }) => {
             return;
         }
 
+        // check premium user 
+        const premiumUser = await getPremiumUserById(user.id);
+        console.log(premiumUser);
+
+        // user job apply count
         const jobCount = await myApplicationsCount(user.id);
 
-        if (jobCount.count >= 5) {
+        if (!premiumUser.premium && jobCount.count >= 5) {
             router.push('/checkout');
         } else {
             try {
