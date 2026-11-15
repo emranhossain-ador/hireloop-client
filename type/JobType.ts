@@ -1,4 +1,5 @@
 export interface JobType {
+    userId?: string;
     _id?: string;
     jobTitle: string;
     companyName: string;

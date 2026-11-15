@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { createJob } from "@/lib/actions/Jobs";
+import { useSession } from "@/lib/auth-client";
 import { JobType } from "@/type/JobType";
 import { BangladeshiTaka, Building2, CalendarIcon, ChevronDown, Globe, MapPin } from "lucide-react";
 import { useState } from "react";
@@ -51,6 +52,9 @@ type FormError = {
 
 
 const AddJobForm = () => {
+    const session = useSession();
+    const user = session?.data?.user;
+
     const [error, setError] = useState<FormError>({});
     const [jobType, setJobType] = useState('Full-time');
     const [remote, setRemote] = useState<boolean>(true);
@@ -111,6 +115,7 @@ const AddJobForm = () => {
         if (Object.keys(newError).length === 0) {
 
             const jobData: JobType = {
+                userId: user?.id,
                 jobTitle,
                 companyName,
                 jobCategory,
