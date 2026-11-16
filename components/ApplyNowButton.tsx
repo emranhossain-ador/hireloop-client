@@ -22,7 +22,6 @@ const ApplyNowButton = ({ jobId }: { jobId: string }) => {
 
         // check premium user 
         const premiumUser = await getPremiumUserById(user.id);
-        console.log(premiumUser);
 
         // user job apply count
         const jobCount = await myApplicationsCount(user.id);

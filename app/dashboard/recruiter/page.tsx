@@ -1,11 +1,14 @@
 import Image from "next/image";
 import { CircleCheckBig, FileText, Plus, Users, Zap } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { getSession } from "@/lib/core/server";
+import { getJobsByUserId } from "@/lib/api/Jobs";
 
 interface StatCard {
     title: string;
     value: string;
     icon: LucideIcon;
+    slug: string;
 }
 
 interface Application {
@@ -23,21 +26,25 @@ const stats: StatCard[] = [
         title: "Total Job Posts",
         value: "48",
         icon: FileText,
+        slug: "totalJobPost",
     },
     {
         title: "Total Applicants",
         value: "1,284",
         icon: Users,
+        slug: "totalApplicants",
     },
     {
         title: "Active Jobs",
         value: "18",
         icon: Zap,
+        slug: "totalActiveJobs",
     },
     {
         title: "Jobs Closed",
         value: "32",
         icon: CircleCheckBig,
+        slug: "totalJobsClosed",
     },
 ];
 
@@ -91,7 +98,13 @@ const statusStyles: Record<Application["status"], string> = {
     Rejected: "bg-red-500",
 };
 
-const RecruiterDashboardpage = () => {
+const RecruiterDashboardpage = async () => {
+
+    const session = await getSession();
+    const user = session?.user;
+
+    const totalJobPost = await getJobsByUserId(user?.id as string);
+
     return (
         <div className="mx-auto max-w-7xl pb-16">
             {/* ============================================================
@@ -111,9 +124,9 @@ const RecruiterDashboardpage = () => {
                     return (
                         <div
                             key={stat.title}
-                            className="flex min-h-40 flex-col justify-between rounded-2xl border border-white/[0.08] bg-[#16161a] p-5 shadow-sm transition-all duration-200 hover:border-white/15"
+                            className="flex min-h-40 flex-col justify-between rounded-2xl border border-white/8 bg-[#16161a] p-5 shadow-sm transition-all duration-200 hover:border-white/15"
                         >
-                            <div className="flex size-11 items-center justify-center rounded-xl border border-white/[0.06] bg-[#1c1c22] text-white">
+                            <div className="flex size-11 items-center justify-center rounded-xl border border-white/6 bg-[#1c1c22] text-white">
                                 <Icon className="size-5" />
                             </div>
 
@@ -121,8 +134,9 @@ const RecruiterDashboardpage = () => {
                                 <p className="text-xs font-medium text-muted-foreground">
                                     {stat.title}
                                 </p>
+
                                 <p className="mt-1 text-3xl font-bold tracking-tight text-white">
-                                    {stat.value}
+                                    {stat.slug === "totalJobPost" ? totalJobPost.length : stat.value}
                                 </p>
                             </div>
                         </div>

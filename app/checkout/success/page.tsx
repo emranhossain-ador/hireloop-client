@@ -7,19 +7,34 @@ import {
     Sparkles,
     ArrowRight,
     BriefcaseBusiness,
-    CreditCard,
-    CalendarDays,
     Home,
 } from "lucide-react";
 import { stripe } from "@/lib/stripe";
 import { redirect } from "next/navigation";
 import { checkoutVerify } from "@/lib/actions/Payments";
+import { getSession } from "@/lib/core/server";
 
 interface SuccessPageProps {
     searchParams: Promise<{
         session_id?: string;
     }>;
 }
+
+const seekerFeatures = [
+    "Unlimited job applications",
+    "Apply to any available job",
+    "Track all your applications",
+    "Application status updates",
+    "Priority application tracking",
+    "Cancel subscription anytime",
+];
+
+const recruiterFeatures = [
+    "Unlimited job post",
+    "Multiple candidates job",
+    "View all candidate profile",
+    "Cancel subscription anytime",
+];
 
 export default async function PaymentSuccessPage({
     searchParams,
@@ -41,9 +56,13 @@ export default async function PaymentSuccessPage({
     }
     if (status === 'complete' && payment_status === "paid") {
 
-        const checkout = await checkoutVerify(session_id as string);
+        await checkoutVerify(session_id as string);
 
-        console.log(checkout);
+        // User info
+        const session = await getSession();
+        const userRole = session?.user.role;
+
+        const features = userRole === 'seeker' ? seekerFeatures : recruiterFeatures;
 
         return (
             <section id="success">
@@ -92,7 +111,7 @@ export default async function PaymentSuccessPage({
                                     </div>
 
                                     <div className="min-w-0 flex-1">
-                                        <h2 className="font-bold">Job Seeker Pro</h2>
+                                        <h2 className="font-bold">Job {userRole === 'seeker' ? "Seeker" : "Recruiter"} Pro</h2>
                                         <p className="mt-1 text-xs text-muted-foreground">
                                             One-time purchase · Lifetime access
                                         </p>
@@ -115,7 +134,7 @@ export default async function PaymentSuccessPage({
                                             Plan
                                         </span>
                                         <span className="font-medium">
-                                            Job Seeker Pro
+                                            Job {userRole === 'seeker' ? "Seeker" : "Recruiter"} Pro
                                         </span>
                                     </div>
 
@@ -124,7 +143,7 @@ export default async function PaymentSuccessPage({
                                             Payment Type
                                         </span>
                                         <span className="font-medium">
-                                            One-time Payment
+                                            {userRole === 'seeker' ? "One-time" : "Monthly"}  Payment
                                         </span>
                                     </div>
 
@@ -153,7 +172,7 @@ export default async function PaymentSuccessPage({
                                                 Total Paid
                                             </span>
                                             <span className="text-2xl font-bold text-emerald-500">
-                                                $9.99
+                                                {userRole === 'seeker' ? "$9.99" : "$20.00"}
                                             </span>
                                         </div>
                                     </div>
@@ -168,12 +187,7 @@ export default async function PaymentSuccessPage({
                                     </h3>
 
                                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                        {[
-                                            "Unlimited job applications",
-                                            "Track your applications",
-                                            "Access all job listings",
-                                            "Priority job tracking",
-                                        ].map((feature) => (
+                                        {features.map((feature) => (
                                             <div
                                                 key={feature}
                                                 className="flex items-center gap-2 text-xs text-muted-foreground"
@@ -200,7 +214,7 @@ export default async function PaymentSuccessPage({
                                     </Link>
 
                                     <Link
-                                        href="/dashboard"
+                                        href={`/dashboard/${userRole}`}
                                         className="flex w-full items-center justify-center gap-2 rounded-xl border border-border px-5 py-3 text-sm font-semibold transition hover:bg-muted"
                                     >
                                         <Home size={16} />

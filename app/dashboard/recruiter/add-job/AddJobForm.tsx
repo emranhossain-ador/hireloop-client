@@ -8,11 +8,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { createJob } from "@/lib/actions/Jobs";
+import { getJobsByUserId } from "@/lib/api/Jobs";
 import { useSession } from "@/lib/auth-client";
 import { JobType } from "@/type/JobType";
 import { BangladeshiTaka, Building2, CalendarIcon, ChevronDown, Globe, MapPin } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { getPremiumUserById } from "@/lib/api/User";
 
 const jobTypes = ["Full-time", "Part-time", "Contract", "Internship"];
 
@@ -60,13 +63,15 @@ const AddJobForm = () => {
     const [remote, setRemote] = useState<boolean>(true);
 
     const [deadline, setDeadline] = useState<Date | undefined>(
-        new Date(2025, 4, 30),
+        new Date(),
     );
     const [deadlineOpen, setDeadlineOpen] = useState(false);
 
+    const router = useRouter();
 
     const handleSubmit = async (events: React.FormEvent<HTMLFormElement>) => {
         events.preventDefault();
+
         const form = events.currentTarget;
         const formData = new FormData(form);
         const jobTitle = String(formData.get('jobTitle') ?? "").trim();
@@ -111,6 +116,16 @@ const AddJobForm = () => {
         }
 
         setError(newError);
+
+
+        // Total job post count 
+        const totalJobPost = await getJobsByUserId(user?.id as string);
+        const premiumUser = await getPremiumUserById(user?.id);
+
+        if (!premiumUser.premium && totalJobPost.length > 5) {
+            router.push('/checkout');
+            return;
+        }
 
         if (Object.keys(newError).length === 0) {
 

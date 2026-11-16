@@ -10,7 +10,7 @@ import {
     Search,
     Users,
 } from "lucide-react";
-import { getJobs, getJobsByUserId } from "@/lib/api/Jobs";
+import { getJobsByUserId } from "@/lib/api/Jobs";
 import { JobType } from "@/type/JobType";
 import { format, formatDistance } from "date-fns";
 import { JobDeleteDialog } from "@/components/JobDeleteDialog";
@@ -29,7 +29,7 @@ const ManageJobsPage = async () => {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <nav className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <span>Manage Jobs {jobs.length}</span>
+                        <span>Manage Jobs</span>
                         <ChevronRight className="size-3" />
                         <span className="font-medium text-primary">
                             Job Listings & Postings

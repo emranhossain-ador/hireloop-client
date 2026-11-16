@@ -1,34 +1,30 @@
 
+import { getSession } from "@/lib/core/server";
 import {
-    Check,
     ShieldCheck,
-    Zap,
-    BriefcaseBusiness,
     CreditCard,
     ArrowRight,
     Sparkles,
 } from "lucide-react";
+import SeekerCheckoutContent from "./_components/seekerCheckoutContent";
+import RecruiterCheckoutContent from "./_components/recruiterCheckoutContent";
 
 
-const features = [
-    "Unlimited job applications",
-    "Apply to any available job",
-    "Track all your applications",
-    "Application status updates",
-    "Priority application tracking",
-    "Cancel subscription anytime",
-];
 
 export default async function CheckoutPage({ searchParams }: { searchParams: Promise<{ canceled?: string }> }) {
 
-
-    const { canceled } = await searchParams
+    const { canceled } = await searchParams;
 
     if (canceled) {
         console.log(
             'Order canceled -- continue to shop around and check out when you\'re ready.'
         )
     }
+
+    // get login user
+    const session = await getSession();
+    const user = session?.user;
+    const userRole = user?.role;
 
     return (
         <div className="min-h-screen bg-background px-4 py-10 sm:py-16">
@@ -42,11 +38,11 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
                     </div>
 
                     <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                        Unlock Unlimited Job Applications
+                        Unlock Unlimited {userRole === "seeker" ? "Jobs Applications" : "Jobs Post"}
                     </h1>
 
                     <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
-                        You have reached your free application limit.
+                        You have reached your free {userRole === "seeker" ? "application" : "job post"} limit.
                         Upgrade to Pro and never miss another opportunity.
                     </p>
                 </div>
@@ -55,69 +51,13 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
                 <div className="mx-auto grid max-w-4xl overflow-hidden rounded-2xl border border-border bg-card shadow-xl md:grid-cols-2">
 
                     {/* Left: Plan */}
-                    <div className="relative overflow-hidden bg-linear-to-br from-primary/15 via-primary/5 to-transparent p-6 sm:p-9">
+                    {
+                        userRole === "seeker" ?
+                            <SeekerCheckoutContent />
+                            :
+                            <RecruiterCheckoutContent />
+                    }
 
-                        <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
-
-                        <div className="relative">
-                            <div className="mb-6 flex items-center gap-3">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg">
-                                    <Zap size={24} />
-                                </div>
-
-                                <div>
-                                    <h2 className="text-xl font-bold">Job Seeker Pro</h2>
-                                    <p className="text-sm text-muted-foreground">
-                                        For serious job seekers
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="mb-8">
-                                <div className="flex items-end gap-2">
-                                    <span className="text-5xl font-extrabold tracking-tight">
-                                        $9.99
-                                    </span>
-                                    <span className="mb-1 text-muted-foreground">
-                                        / month
-                                    </span>
-                                </div>
-                                <p className="mt-2 text-sm text-muted-foreground">
-                                    Billed monthly. Cancel anytime.
-                                </p>
-                            </div>
-
-                            <div className="mb-4 flex items-center gap-2 text-sm font-semibold">
-                                <BriefcaseBusiness size={18} className="text-primary" />
-                                What's included
-                            </div>
-
-                            <ul className="space-y-4">
-                                {features.map((feature) => (
-                                    <li
-                                        key={feature}
-                                        className="flex items-center gap-3 text-sm"
-                                    >
-                                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-500">
-                                            <Check size={13} strokeWidth={3} />
-                                        </span>
-                                        {feature}
-                                    </li>
-                                ))}
-                            </ul>
-
-                            <div className="mt-9 rounded-xl border border-primary/15 bg-background/60 p-4">
-                                <div className="flex items-center gap-2 text-sm font-semibold">
-                                    <ShieldCheck size={18} className="text-emerald-500" />
-                                    Secure subscription
-                                </div>
-                                <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                                    Your payment is securely processed through Stripe.
-                                    Your card details are never stored on our server.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
                     {/* Right: Payment Summary */}
                     <div className="flex flex-col justify-between p-6 sm:p-9">
@@ -133,20 +73,20 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
                             <div className="my-7 rounded-xl border border-border p-4">
                                 <div className="flex items-center justify-between gap-3">
                                     <div>
-                                        <p className="font-semibold">Job Seeker Pro</p>
+                                        <p className="font-semibold">Job {userRole === "seeker" ? "Seeker" : "Recruiter"} Pro</p>
                                         <p className="mt-1 text-xs text-muted-foreground">
                                             Monthly subscription
                                         </p>
                                     </div>
 
-                                    <span className="font-bold">$9.99</span>
+                                    <span className="font-bold">{userRole === "seeker" ? "$9.99" : "$20.00"}</span>
                                 </div>
 
                                 <div className="my-4 border-t border-dashed border-border" />
 
                                 <div className="flex justify-between text-sm text-muted-foreground">
                                     <span>Subtotal</span>
-                                    <span>$9.99</span>
+                                    <span>{userRole === "seeker" ? "$9.99" : "$20.00"}</span>
                                 </div>
 
                                 <div className="mt-3 flex justify-between text-sm text-muted-foreground">
@@ -159,7 +99,7 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
                                 <div className="flex items-center justify-between">
                                     <span className="font-semibold">Total</span>
                                     <span className="text-2xl font-extrabold">
-                                        $9.99
+                                        {userRole === "seeker" ? "$9.99" : "$20.00"}
                                         <span className="text-xs font-normal text-muted-foreground">
                                             {" "}/ month
                                         </span>

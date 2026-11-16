@@ -12,16 +12,36 @@ export async function POST() {
         const headersList = await headers()
         const origin = headersList.get('origin')
 
+        const userRole = userSession?.user.role;
+
+        // Select Price ID based on user role
+        let priceId: string;
+
+        if (userRole === "seeker") {
+            priceId = process.env.STRIPE_SEEKER_PRICE_ID!;
+        } else if (userRole === "recruiter") {
+            priceId = process.env.STRIPE_RECRUITER_PRICE_ID!;
+        } else {
+            return NextResponse.json(
+                { error: "Invalid user role" },
+                { status: 400 }
+            );
+        }
+
+        if (!priceId) {
+            throw new Error("Stripe Price ID is missing");
+        }
+
         // Create Checkout Sessions from body params.
         const session = await stripe.checkout.sessions.create({
             line_items: [
                 {
                     // Provide the exact Price ID (for example, price_1234) of the product you want to sell
-                    price: 'price_1Ubj8CDgzvZxPQM8dqreCVRB',
+                    price: priceId,
                     quantity: 1,
                 },
             ],
-            mode: 'payment',
+            mode: 'subscription',
             customer_email: userSession?.user.email,
             // Add user ID to metadata
             metadata: {

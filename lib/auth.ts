@@ -18,8 +18,13 @@ export const auth = betterAuth({
                 type: "string",
                 input: true,
                 defaultValue: 'seeker'
-            }
-        }
+            },
+            premium: {
+                type: "boolean",
+                required: false,
+                defaultValue: false,
+            },
+        },
     },
 
 
