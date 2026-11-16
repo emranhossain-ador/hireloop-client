@@ -3,6 +3,7 @@ import {
     BangladeshiTaka,
     ChevronRight,
     Code,
+    Eye,
     Globe,
     MapPin,
     Pencil,
@@ -74,7 +75,6 @@ const ManageJobsPage = async () => {
                                         </th>
                                         <th className="px-4 py-4 font-medium">Type</th>
                                         <th className="px-4 py-4 font-medium">Compensation</th>
-                                        <th className="px-4 py-4 font-medium">Applicants</th>
                                         <th className="px-4 py-4 font-medium">Status</th>
                                         <th className="px-4 py-4 font-medium">Deadline</th>
                                         <th className="px-4 py-4 pr-5 text-right font-medium sm:pr-6">
@@ -91,23 +91,14 @@ const ManageJobsPage = async () => {
                                                 className="transition-colors hover:bg-white/2"
                                             >
                                                 <td className="px-5 py-4 sm:px-6">
-                                                    <div className="flex items-center gap-3">
-                                                        <div
-                                                            className={`flex size-10 shrink-0 items-center justify-center rounded-xl`}
-                                                        >
-                                                            <Code className="size-4.5" />
-                                                        </div>
-                                                        <div className="min-w-0">
-                                                            <p className="truncate text-sm font-semibold text-white">
-                                                                {job.jobTitle}
-                                                            </p>
-                                                            <p
-                                                                className={`mt-0.5 text-xs font-medium`}
-                                                            >
-                                                                {job.jobCategory}
-                                                            </p>
-                                                        </div>
-                                                    </div>
+                                                    <p className="truncate text-sm font-semibold text-white">
+                                                        {job.jobTitle}
+                                                    </p>
+                                                    <p
+                                                        className={`mt-0.5 text-xs font-medium`}
+                                                    >
+                                                        {job.jobCategory}
+                                                    </p>
                                                 </td>
 
                                                 <td className="px-4 py-4">
@@ -129,13 +120,6 @@ const ManageJobsPage = async () => {
 
                                                 <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-200 flex items-center gap-1">
                                                     <BangladeshiTaka size={15} />{FormatSalary(job.minSalary)} - {FormatSalary(job.maxSalary)} / {job.frequency}
-                                                </td>
-
-                                                <td className="px-4 py-4">
-                                                    <div className="flex items-center gap-1.5 text-sm font-medium text-violet-300">
-                                                        <Users className="size-5" />
-                                                        5 Candidates
-                                                    </div>
                                                 </td>
 
                                                 <td className="px-4 py-4">
@@ -163,13 +147,13 @@ const ManageJobsPage = async () => {
 
                                                 <td className="px-4 py-4 pr-5 sm:pr-6">
                                                     <div className="flex items-center justify-end gap-1.5">
-                                                        <button
-                                                            type="button"
+                                                        <Link href={`/dashboard/recruiter/manage-jobs/${job._id}`}
                                                             className="inline-flex items-center gap-1.5 rounded-lg bg-[#2a2550] px-3 py-1.5 text-xs font-medium text-violet-200 transition-colors hover:bg-[#352e63]"
                                                         >
-                                                            <Pencil className="size-3.5" />
-                                                            Update
-                                                        </button>
+                                                            <Eye className="size-3.5" />
+                                                            View
+                                                        </Link>
+
                                                         <JobDeleteDialog jobId={job._id as string} />
                                                     </div>
                                                 </td>

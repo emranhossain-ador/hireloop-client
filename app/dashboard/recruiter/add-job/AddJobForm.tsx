@@ -120,7 +120,7 @@ const AddJobForm = () => {
 
         // Total job post count 
         const totalJobPost = await getJobsByUserId(user?.id as string);
-        const premiumUser = await getPremiumUserById(user?.id);
+        const premiumUser = await getPremiumUserById(user?.id as string);
 
         if (!premiumUser.premium && totalJobPost.length > 5) {
             router.push('/checkout');

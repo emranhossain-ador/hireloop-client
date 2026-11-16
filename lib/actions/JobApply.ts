@@ -17,3 +17,17 @@ export async function applyToJob(jobId: string, userId: string) {
 
     return data;
 }
+
+
+export const changeJobApplicationStatus = async (Id: string, data: { status: string }) => {
+    const res = await fetch(`${BASE_URL}/job-applications/${Id}/status-change`, {
+        method: 'PATCH',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+
+    return res.json();
+}
