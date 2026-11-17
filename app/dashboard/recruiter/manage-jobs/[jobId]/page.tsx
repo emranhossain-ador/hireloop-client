@@ -124,8 +124,8 @@ const JobDetailsPage = async ({
                             Posted{" "}
                             {jobDetails.createdAt
                                 ? formatDistance(new Date(jobDetails.createdAt), new Date(), {
-                                      addSuffix: true,
-                                  })
+                                    addSuffix: true,
+                                })
                                 : "recently"}
                         </span>
                     </div>

@@ -1,12 +1,13 @@
 
-import { getUsers } from "@/lib/api/UserSever";
-import UsersClient, { AdminUsersResponse } from "./UsersClient";
+
+import { getUsers } from "@/lib/api/User";
+import UsersClient, { AdminUserItem } from "./UsersClient";
 
 const UsersPage = async () => {
-    const usersData: AdminUsersResponse = await getUsers();
+    const usersData: AdminUserItem = await getUsers();
 
     return (
-        <UsersClient initialUsers={usersData.users} />
+        <UsersClient initialUsers={usersData} />
     );
 };
 

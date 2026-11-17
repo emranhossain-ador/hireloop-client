@@ -12,9 +12,10 @@ import {
     Building2,
     Shield,
     Users,
+    Image as ImageIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 interface FormError {
@@ -24,7 +25,7 @@ interface FormError {
     confirmPassword?: string;
 }
 
-type RoleType = "seeker" | "recruiter" | "admin";
+type RoleType = "seeker" | "recruiter";
 
 const SignupForm = () => {
 
@@ -33,7 +34,73 @@ const SignupForm = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    const [avatarPreview, setAvatarPreview] = useState<string>("");
+    const [avatarError, setAvatarError] = useState<string>("");
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [avatarUrl, setAvatarUrl] = useState<string>('');
     const router = useRouter();
+
+    // Clean up the object URL when the preview changes or the component unmounts
+    useEffect(() => {
+        return () => {
+            if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+        };
+    }, [avatarPreview]);
+
+    const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        setAvatarError("");
+
+        if (!file) {
+            setAvatarFile(null);
+            setAvatarPreview("");
+            return;
+        }
+
+        if (!file.type.startsWith("image/")) {
+            setAvatarError("Please select an image file.");
+            e.target.value = "";
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            setAvatarError("Image must be under 5 MB.");
+            e.target.value = "";
+            return;
+        }
+
+        setAvatarFile(file);
+        setAvatarPreview((prev) => {
+            if (prev) URL.revokeObjectURL(prev);
+            return URL.createObjectURL(file);
+        });
+
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const imgApi = `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`;
+        const res = await fetch(imgApi, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await res.json();
+        setAvatarUrl(result.data.url);
+
+    };
+
+    const handleAvatarRemove = () => {
+        setAvatarFile(null);
+        setAvatarError("");
+        setAvatarPreview((prev) => {
+            if (prev) URL.revokeObjectURL(prev);
+            return "";
+        });
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -72,13 +139,15 @@ const SignupForm = () => {
                     name: name as string,
                     email: email as string,
                     password: password as string,
-                    role: role as RoleType
+                    role: role as RoleType,
+                    image: avatarUrl as string
                 })
 
                 if (error) {
                     toast.error(error.message);
                 } else {
                     form.reset();
+                    handleAvatarRemove();
                     toast.success("Signup successfull");
                     router.push('/sign-in')
                 }
@@ -97,7 +166,7 @@ const SignupForm = () => {
         <form onSubmit={handleSubmit} className="space-y-3.5 mt-8">
 
             {/* Role Switcher Tabs */}
-            <div className="mt-5 grid grid-cols-3 rounded-xl border border-white/10 bg-white/3 p-1">
+            <div className="mt-5 grid grid-cols-2 rounded-xl border border-white/10 bg-white/3 p-1">
                 <button
                     type="button"
                     onClick={() => setRole("seeker")}
@@ -120,17 +189,80 @@ const SignupForm = () => {
                     <Building2 className="size-4.5" />
                     <span>Recruiter</span>
                 </button>
-                <button
-                    type="button"
-                    onClick={() => setRole("admin")}
-                    className={`flex items-center justify-center cursor-pointer  flex-col gap-2 rounded-lg py-2 text-xs font-medium transition-all duration-200 ${role === "admin"
-                        ? "bg-primary text-white shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
-                        }`}
+            </div>
+
+            {/* Profile Image Upload Field with Avatar Preview */}
+            <div className="space-y-1">
+                <label
+                    htmlFor="avatar"
+                    className="block text-xs font-medium text-foreground sm:text-sm"
                 >
-                    <Shield className="size-4.5" />
-                    <span>Admin</span>
-                </button>
+                    Profile Photo
+                </label>
+
+                <div className="flex items-center gap-3">
+                    {/* Avatar Preview */}
+                    <div className="relative size-14 shrink-0 overflow-hidden rounded-full border border-white/10 bg-white/5">
+                        {avatarPreview ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                                src={avatarPreview}
+                                alt="Avatar preview"
+                                className="size-full object-cover"
+                            />
+                        ) : (
+                            <div className="flex size-full items-center justify-center text-muted-foreground">
+                                <User className="size-5" />
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex flex-1 flex-col gap-1.5">
+                        <div className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-white/10 bg-white/4 px-3 py-2 text-xs font-medium text-foreground transition-colors hover:border-white/20 hover:bg-white/7 sm:text-sm"
+                            >
+                                <ImageIcon className="size-4" />
+                                {avatarFile ? "Change photo" : "Upload photo"}
+                            </button>
+
+                            {avatarFile && (
+                                <button
+                                    type="button"
+                                    onClick={handleAvatarRemove}
+                                    className="cursor-pointer rounded-lg px-2 py-2 text-xs text-muted-foreground transition-colors hover:text-red-500 sm:text-sm"
+                                >
+                                    Remove
+                                </button>
+                            )}
+                        </div>
+
+                        <p className="truncate text-[11px] text-muted-foreground">
+                            {avatarFile
+                                ? avatarFile.name
+                                : "JPG, PNG or WebP — up to 5 MB"}
+                        </p>
+                    </div>
+
+                    {/* Hidden file input (accepts gallery/photos on mobile) */}
+                    <input
+                        ref={fileInputRef}
+                        id="avatar"
+                        name="avatar"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarChange}
+                        className="hidden"
+                    />
+                </div>
+
+                {avatarError && (
+                    <p className="text-sm text-red-500 flex items-center gap-1.5 pt-1">
+                        <TriangleExclamationPoint size={15} /> {avatarError}
+                    </p>
+                )}
             </div>
 
             {/* Name Field */}

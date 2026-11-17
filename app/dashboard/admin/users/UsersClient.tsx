@@ -26,27 +26,19 @@ import { useRouter } from "next/navigation";
 import { updateUserRoleById } from "@/lib/actions/Users";
 
 export interface AdminUserItem {
-    id: string;
+    _id: string;
     name: string;
     email: string;
     emailVerified: boolean;
     createdAt: Date;
     updatedAt: Date;
     role?: string;
+    image?: string;
 }
 
-export interface AdminUsersResponse {
-    users: AdminUserItem[];
-    total: number;
-}
 
-interface UsersClientProps {
-    initialUsers: AdminUserItem[];
-}
 
-export default function UsersClient({
-    initialUsers,
-}: UsersClientProps) {
+export default function UsersClient({ initialUsers }: { initialUsers: AdminUserItem[] }) {
     const router = useRouter();
     const [, startTransition] = useTransition();
 
@@ -92,7 +84,7 @@ export default function UsersClient({
 
             setUsersList((prev) =>
                 prev.map((u) =>
-                    u.id === userId ? { ...u, role: targetRole } : u
+                    u._id === userId ? { ...u, role: targetRole } : u
                 )
             );
 
@@ -278,7 +270,7 @@ export default function UsersClient({
                                     const roleStr = (user.role || "seeker").toLowerCase();
                                     const isRecruiter = roleStr === "recruiter";
                                     const isAdmin = roleStr === "admin";
-                                    const isBusy = loadingUserId === user.id;
+                                    const isBusy = loadingUserId === user._id;
 
                                     // Format join date
                                     let formattedDate = "Oct 12, 2023";
@@ -295,7 +287,7 @@ export default function UsersClient({
 
                                     return (
                                         <tr
-                                            key={user.id}
+                                            key={user._id}
                                             className="transition-colors hover:bg-white/2"
                                         >
                                             {/* User Name + Avatar */}
@@ -372,7 +364,7 @@ export default function UsersClient({
 
                                                     <DropdownMenuContent align="end" className="w-44">
                                                         <DropdownMenuItem
-                                                            onClick={() => handleToggleRole(user.id as string, "seeker")}
+                                                            onClick={() => handleToggleRole(user._id as string, "seeker")}
                                                             disabled={isBusy || user.role === "seeker"}
                                                             className="cursor-pointer"
                                                         >
@@ -381,7 +373,7 @@ export default function UsersClient({
                                                         </DropdownMenuItem>
 
                                                         <DropdownMenuItem
-                                                            onClick={() => handleToggleRole(user.id, "recruiter")}
+                                                            onClick={() => handleToggleRole(user._id, "recruiter")}
                                                             disabled={isBusy || user.role === "recruiter"}
                                                             className="cursor-pointer"
                                                         >
@@ -390,7 +382,7 @@ export default function UsersClient({
                                                         </DropdownMenuItem>
 
                                                         <DropdownMenuItem
-                                                            onClick={() => handleToggleRole(user.id, "admin")}
+                                                            onClick={() => handleToggleRole(user._id, "admin")}
                                                             disabled={isBusy || user.role === "admin"}
                                                             className="cursor-pointer"
                                                         >
