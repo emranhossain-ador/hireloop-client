@@ -7,6 +7,7 @@ const client = new MongoClient(process.env.MONGO_DB_URL as string);
 const db = client.db('hireloopdb');
 
 export const auth = betterAuth({
+    baseURL: process.env.NEXT_PUBLIC_BASE_URL,
     emailAndPassword: {
         enabled: true,
     },
